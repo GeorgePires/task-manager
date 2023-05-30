@@ -1,19 +1,24 @@
 # frozen_string_literal: true
 
 class Task < ApplicationRecord
+  attr_accessor :skip_titleize_name
+
   belongs_to :category, optional: true
   # normalizes :name, with: ->(name) { name.donwcase.titleize }
 
-  before_validation :titleize_name, :set_default_position
+  before_validation :titleize_name, unless: :skip_titleize_name
+  before_validation :set_default_position,
+                    if: proc { |t| t.position.blank? || t.position < 1 }
+
   before_create :log_create
   before_update :log_update
+
   after_save :log_save
-  after_commit :cleaning_reminder
+  after_commit :cleaning_reminder, if: :too_many_records?
 
   validates :name, :position, presence: true
   validates :name, length: { minimum: 3, maximum: 50 }
   validates :position, numericality: { greater_than: 0 }
-
   validate :description_has_no_prohibited_words
 
   scope :sorted, -> { order(:position) }
@@ -37,8 +42,6 @@ class Task < ApplicationRecord
   end
 
   def set_default_position
-    return unless position.blank? || position < 1
-
     max = Task.maximum(:position) || 0
     self.position = max + 1
   end
@@ -59,5 +62,9 @@ class Task < ApplicationRecord
   def cleaning_reminder
     # This could be a placeholder for sending an email to an admin
     logger.debug('Remember to prune old tasks')
+  end
+
+  def too_many_records?
+    Task.count > 4
   end
 end
