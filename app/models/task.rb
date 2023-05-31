@@ -4,6 +4,7 @@ class Task < ApplicationRecord
   attr_accessor :skip_titleize_name
 
   belongs_to :category, optional: true
+  has_and_belongs_to_many :tags
   # normalizes :name, with: ->(name) { name.donwcase.titleize }
 
   before_validation :titleize_name, unless: :skip_titleize_name
@@ -29,7 +30,7 @@ class Task < ApplicationRecord
   private
 
   def description_has_no_prohibited_words
-    return unless description.present?
+    return if description.blank?
 
     prohibited_words = %w[later eventually someday]
     prohibited_words.each do |word|
