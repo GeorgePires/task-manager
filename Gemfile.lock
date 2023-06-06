@@ -116,6 +116,11 @@ GEM
     method_source (1.0.0)
     mini_mime (1.1.2)
     minitest (5.18.0)
+    minitest-bisect (1.6.0)
+      minitest-server (~> 1.0)
+      path_expander (~> 1.1)
+    minitest-server (1.0.7)
+      minitest (~> 5.16)
     msgpack (1.7.0)
     net-imap (0.3.4)
       date
@@ -132,6 +137,7 @@ GEM
     parallel (1.23.0)
     parser (3.2.2.1)
       ast (~> 2.4.1)
+    path_expander (1.1.1)
     pg (1.5.3)
     public_suffix (5.0.1)
     puma (5.6.5)
@@ -240,6 +246,7 @@ DEPENDENCIES
   debug
   importmap-rails
   jbuilder
+  minitest-bisect
   pg (~> 1.1)
   puma (~> 5.0)
   rails (~> 7.0.4, >= 7.0.4.3)
